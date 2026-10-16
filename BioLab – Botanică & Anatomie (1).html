@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BioLab – Botanică & Anatomie</title>
+<style>
+:root{--bg:#f4f8f1;--card:#ffffffe6;--tx:#1d2b1f;--mut:#5b6b5e;--ac:#2f8f4e;--bd:#d5e3d3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a14;--card:#1c2820e6;--tx:#e8f0e9;--mut:#9fb2a3;--bd:#2c3d31}}
+:root[data-theme="dark"]{--bg:#121a14;--card:#1c2820e6;--tx:#e8f0e9;--mut:#9fb2a3;--bd:#2c3d31}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;opacity:.2;background-size:260px}
+body.plant::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Ctext x='15' y='50' font-size='38'%3E🌿%3C/text%3E%3Ctext x='130' y='90' font-size='38'%3E🌸%3C/text%3E%3Ctext x='40' y='160' font-size='38'%3E🍄%3C/text%3E%3Ctext x='170' y='200' font-size='38'%3E🌱%3C/text%3E%3Ctext x='95' y='235' font-size='34'%3E🌺%3C/text%3E%3Ctext x='200' y='40' font-size='34'%3E🍃%3C/text%3E%3C/svg%3E")}
+body.anat{--ac:#c0392b}
+body.anat::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Ctext x='15' y='50' font-size='38'%3E🦴%3C/text%3E%3Ctext x='130' y='90' font-size='38'%3E🫀%3C/text%3E%3Ctext x='40' y='160' font-size='38'%3E💪%3C/text%3E%3Ctext x='170' y='200' font-size='38'%3E🫁%3C/text%3E%3Ctext x='95' y='235' font-size='34'%3E🧠%3C/text%3E%3Ctext x='200' y='40' font-size='34'%3E💀%3C/text%3E%3C/svg%3E")}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+.bar{max-width:900px;margin:auto;padding:10px 14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:800;margin-right:auto;cursor:pointer}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav button{border:1px solid var(--bd);background:transparent;color:var(--tx);padding:7px 12px;border-radius:20px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:900px;margin:auto;padding:16px 14px 60px}
+h1{font-size:1.6rem;margin:.3em 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin:12px 0;backdrop-filter:blur(4px)}
+.card h3{margin:.1em 0 .3em}
+.clk{cursor:pointer}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:12px;background:var(--ac);color:#fff;margin-right:6px}
+.mut{color:var(--mut);font-size:14px}
+.btn{display:inline-block;background:var(--ac);color:#fff;border:0;padding:9px 16px;border-radius:10px;font:inherit;cursor:pointer;text-decoration:none;margin:2px 4px 2px 0}
+.btn.sec{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn.del{background:#b03030}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.thumb{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+.imgs img{max-width:100%;border-radius:10px;margin:8px 0;display:block;cursor:zoom-in}
+.body h4{margin:1em 0 .2em}
+.body p{margin:.5em 0}
+label{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}
+textarea{min-height:240px}
+.prev{display:flex;gap:8px;flex-wrap:wrap}
+.prev div{position:relative}
+.prev img{width:90px;height:90px;object-fit:cover;border-radius:8px}
+.prev button{position:absolute;top:2px;right:2px;border:0;border-radius:50%;width:22px;height:22px;background:#000a;color:#fff;cursor:pointer}
+#zoom{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:20;padding:10px}
+#zoom img{max-width:100%;max-height:100%}
+footer{text-align:center;padding:20px;font-size:13px;color:var(--mut)}
+</style>
+</head>
+<body class="plant">
+<header><div class="bar"><span class="logo" onclick="go('home')">🧬 BioLab</span><nav id="nav"></nav></div></header>
+<main id="app"></main>
+<div id="zoom" onclick="this.style.display='none'"><img id="zimg" alt=""></div>
+<footer>© BioLab</footer>
+<script type="application/json" id="data">{"lessons":[]}</script>
+<script>
+const DATA=JSON.parse(document.getElementById("data").textContent);
+const SEC={plant:"🌿 Botanică",anat:"🫀 Anatomie"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let page="home",openId=null,draft=null,owner=false;
+
+(async()=>{try{const u=await claude.use("user");if(u){owner=await u.isOwner();render()}}catch(e){}})();
+
+function body(t){
+  return (t||"").split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean).map(b=>{
+    if(b.startsWith("# "))return "<h4>"+esc(b.slice(2))+"</h4>";
+    if(b.split("\n").every(l=>l.trim().startsWith("- ")))return "<ul>"+b.split("\n").map(l=>"<li>"+esc(l.trim().slice(2))+"</li>").join("")+"</ul>";
+    return "<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";
+  }).join("");
+}
+function render(){
+  const cls=(page==="anat"||(page==="lesson"&&cur()&&cur().s==="anat")||(page==="edit"&&draft&&draft.s==="anat"))?"anat":"plant";
+  document.body.className=cls;
+  const nav=[["home","Acasă"],["plant",SEC.plant],["anat",SEC.anat]];
+  $("nav").innerHTML=nav.map(([k,v])=>`<button class="${k===page?"on":""}" onclick="go('${k}')">${v}</button>`).join("");
+  const a=$("app");
+  if(page==="home"){
+    const n=DATA.lessons.length;
+    a.innerHTML=`<h1>Învață biologia vizual</h1><p class="mut">Lecții și planșe de biologie vegetală, anatomie și fiziologie.</p>
+    <div class="grid"><div class="card clk" onclick="go('plant')"><h3>🌿 Botanică</h3><p class="mut">${DATA.lessons.filter(l=>l.s==="plant").length} materiale</p></div>
+    <div class="card clk" onclick="go('anat')"><h3>🫀 Anatomie & Fiziologie</h3><p class="mut">${DATA.lessons.filter(l=>l.s==="anat").length} materiale</p></div></div>
+    ${owner&&!n?`<div class="card"><b>Site-ul este gol.</b> Intră în Botanică sau Anatomie și apasă „+ Material nou".</div>`:""}`;
+  }else if(page==="plant"||page==="anat"){
+    const L=DATA.lessons.filter(l=>l.s===page).sort((x,y)=>y.ts-x.ts);
+    a.innerHTML=`<h1>${page==="plant"?"Biologie vegetală":"Anatomie & Fiziologie"}</h1>
+    ${owner?`<button class="btn" onclick="newLesson('${page}')">+ Material nou</button>`:""}
+    ${L.length?`<div class="grid">${L.map(l=>`<div class="card clk" onclick="openL('${l.id}')">${l.imgs&&l.imgs[0]?`<img class="thumb" src="${l.imgs[0]}" alt="">`:""}${l.buy?'<span class="tag">Plătit</span>':""}<h3>${esc(l.t)}</h3><p class="mut">${esc(l.d||"")}</p></div>`).join("")}</div>`:`<p class="mut">Nu există încă materiale în această secțiune.</p>`}`;
+  }else if(page==="lesson"){
+    const l=cur();if(!l){go("home");return}
+    a.innerHTML=`<button class="btn sec" onclick="go('${l.s}')">← Înapoi</button>
+    <div class="card"><h1>${esc(l.t)}</h1>${l.d?`<p class="mut">${esc(l.d)}</p>`:""}
+    <div class="imgs">${(l.imgs||[]).map((s,i)=>`<img src="${s}" alt="" onclick="zoom(this.src)">`).join("")}</div>
+    <div class="body">${body(l.body)}</div>
+    ${l.buy?`<p><a class="btn" href="${esc(l.buy)}" target="_blank" rel="noopener">Obține materialul complet${l.price?" · "+esc(l.price):""}</a></p>`:""}
+    ${owner?`<hr><button class="btn sec" onclick="editL('${l.id}')">Editează</button><button class="btn del" onclick="delL('${l.id}')">Șterge</button>`:""}</div>`;
+  }else if(page==="edit"){
+    const d=draft;
+    a.innerHTML=`<h1>${d.isNew?"Material nou":"Editează material"}</h1><div class="card">
+    <label>Secțiune</label><select onchange="draft.s=this.value;render()"><option value="plant" ${d.s==="plant"?"selected":""}>Botanică</option><option value="anat" ${d.s==="anat"?"selected":""}>Anatomie & Fiziologie</option></select>
+    <label>Titlu</label><input value="${esc(d.t)}" oninput="draft.t=this.value">
+    <label>Descriere scurtă (apare pe card)</label><input value="${esc(d.d)}" oninput="draft.d=this.value">
+    <label>Text (paragrafe separate prin rând gol; „# Titlu" = subtitlu; rânduri cu „- " = listă)</label><textarea oninput="draft.body=this.value">${esc(d.body)}</textarea>
+    <label>Planșe / imagini</label><input type="file" accept="image/*" multiple onchange="addImgs(this.files)">
+    <div class="prev">${d.imgs.map((s,i)=>`<div><img src="${s}" alt=""><button onclick="draft.imgs.splice(${i},1);render()">×</button></div>`).join("")}</div>
+    <label>Link de cumpărare pentru materialul complet (opțional – Gumroad, Stripe etc.)</label><input value="${esc(d.buy)}" oninput="draft.buy=this.value" placeholder="https://...">
+    <label>Preț afișat (opțional)</label><input value="${esc(d.price)}" oninput="draft.price=this.value" placeholder="ex: 29 RON">
+    <p id="msg" class="mut"></p>
+    <button class="btn" onclick="saveL()">Publică</button><button class="btn sec" onclick="go(draft.s)">Anulează</button></div>`;
+  }
+}
+function cur(){return DATA.lessons.find(l=>l.id===openId)}
+function go(p){page=p;scrollTo(0,0);render()}
+function openL(id){openId=id;go("lesson")}
+function zoom(s){$("zimg").src=s;$("zoom").style.display="flex"}
+function newLesson(s){draft={isNew:true,id:"l"+Date.now().toString(36),s,t:"",d:"",body:"",imgs:[],buy:"",price:""};go("edit")}
+function editL(id){draft=JSON.parse(JSON.stringify(cur()));draft.imgs=draft.imgs||[];draft.buy=draft.buy||"";draft.price=draft.price||"";go("edit")}
+async function shrink(f){
+  const bm=await createImageBitmap(f);const k=Math.min(1,1400/Math.max(bm.width,bm.height));
+  const c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
+  const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(bm,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",.82);
+}
+async function addImgs(fs){for(const f of fs){try{draft.imgs.push(await shrink(f))}catch(e){}}render()}
+async function persist(){
+  const art=await claude.use("artifact");if(!art)throw {message:"Publicarea nu este disponibilă."};
+  const c=document.documentElement.cloneNode(true);
+  c.querySelector("#app").innerHTML="";c.querySelector("#nav").innerHTML="";c.querySelector("body").className="plant";
+  c.querySelector("#zimg").removeAttribute("src");c.querySelector("#zoom").style.display="none";
+  c.querySelector("#data").textContent=JSON.stringify(DATA).replace(/</g,"\\u003c");
+  await art.publish("<!DOCTYPE html>\n"+c.outerHTML);
+}
+async function saveL(){
+  const m=$("msg");
+  if(!draft.t.trim()){m.textContent="Adaugă un titlu.";return}
+  const old=JSON.stringify(DATA);const i=DATA.lessons.findIndex(l=>l.id===draft.id);
+  const l={id:draft.id,s:draft.s,t:draft.t.trim(),d:draft.d.trim(),body:draft.body,imgs:draft.imgs,buy:draft.buy.trim(),price:draft.price.trim(),ts:i>=0?DATA.lessons[i].ts:Date.now()};
+  if(i>=0)DATA.lessons[i]=l;else DATA.lessons.push(l);
+  m.textContent="Se publică...";
+  try{await persist()}catch(e){const o=JSON.parse(old);DATA.lessons=o.lessons;m.textContent="Eroare: "+(e.code==="conflict"?"s-a publicat altă versiune; pagina se reîncarcă.":(e.message||"încearcă din nou."))}
+}
+async function delL(id){
+  if(!confirm("Ștergi acest material?"))return;
+  const old=DATA.lessons.slice();DATA.lessons=DATA.lessons.filter(l=>l.id!==id);
+  try{await persist()}catch(e){DATA.lessons=old;alert("Eroare: "+(e.message||"încearcă din nou."))}
+}
+render();
+</script>
+</body>
+</html>
